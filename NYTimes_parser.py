@@ -21,8 +21,11 @@ def get_XML(url):
 
 """ Opens local *.xml file. """
 def get_local_XML(file):
-	open(file, "r")
-	return file.read()
+	f = open(file, "r")
+	xml_file = f.read()
+	f.close()
+	doc = xml.dom.minidom.parseString(xml_file)
+	return doc
 
 """ Downloads and saves to *.xml file. """
 def download_XML(url):
@@ -38,16 +41,8 @@ def download_XML(url):
 	else:
 		raise UnexpectedError(response.text)
 
-""" Returns list of strings with all RSS titles. """
-def get_titles(doc):
-	titles = []
-	for element in doc.getElementsByTagName("item"):
-		title = element.getElementsByTagName('title')[0].firstChild.nodeValue
-		titles.append(title)
-	return titles
-
 """ Returns list of strings with a specfied number of RSS titles. """
-def get_titles(doc, num):
+def get_titles(doc, num = -1):
 	titles = []
 	counter = 0
 	for element in doc.getElementsByTagName("item"):
@@ -82,5 +77,5 @@ def word_analysis(title):
 				word_dict[word] = count
 		for word in word_dict: # analyzes dict
 			percent = round(100 * word_dict[word] / text_length, 2)
-			print("Word '{0}' appears {1} times and consists of {2} percent of text".format(word, count, percent))
+			print("Word '{0}' appears {1} times and consists of {2} percent of text".format(word, word_dict[word], percent))
 		print("\n")		
